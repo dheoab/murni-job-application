@@ -5,6 +5,7 @@ const errorHandler = require("../handlers/errorHandler");
 
 router.post("/register", controller.register);
 router.post("/login", controller.login);
+router.get("/users", controller.readUsers);
 
 router.use(errorHandler);
 module.exports = router;

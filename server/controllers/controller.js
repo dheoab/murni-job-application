@@ -12,7 +12,12 @@ class Controller {
 
   static async register(req, res, next) {
     try {
-      const { username, password, age } = req.body;
+      const { username, password, confirmPassword, age } = req.body;
+
+      if (password !== confirmPassword) {
+        throw { name: "PasswordDifferent" };
+      }
+
       const newUser = await User.create({
         username: username,
         password: password,
@@ -49,6 +54,11 @@ class Controller {
         id: newUser.id,
         username: newUser.username,
       };
+
+      const type = "register";
+      const description = `Account with id ${returnData.id} has been registered`;
+
+      Controller.createLogs(type, description);
 
       res.status(201).json({
         statusCode: 201,
@@ -88,6 +98,27 @@ class Controller {
         userId: user.id,
         username: user.username,
         access_token: access_token,
+      });
+
+      const type = "login";
+      const description = `User with id ${user.id} has Logged In`;
+
+      Controller.createLogs(type, description);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async readUsers(req, res, next) {
+    try {
+      const users = await User.findAll();
+
+      res.status(200).json({
+        statusCode: 200,
+        users: users.map((user) => {
+          delete user.dataValues.password;
+          return user;
+        }),
       });
     } catch (error) {
       next(error);

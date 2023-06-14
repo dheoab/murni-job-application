@@ -34,6 +34,9 @@ const errorHandler = (err, req, res, next) => {
   } else if (err.name === "notLogged") {
     statusCode = 401;
     msg = "Unauthorized";
+  } else if (err.name === "PasswordDifferent") {
+    statusCode = 400;
+    msg = "Password different";
   }
   res.status(statusCode).json({
     statusCode: statusCode,
